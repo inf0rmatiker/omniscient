@@ -20,10 +20,10 @@ OMNI_DIR=$(dirname "$0")
 export OMNI_DIR
 
 # Instance variables
-export SCRIPT_DIR="$OMNI_DIR/sbin"
-export HOST_FILE="$OMNI_DIR/etc/hosts.txt"
-export CONFIG_FILE="$OMNI_DIR/etc/config.sh"
-export NMON_CMD="$OMNI_DIR/bin/nmon"
+export SCRIPT_DIR="$OMNI_DIR/monitoring"
+export HOST_FILE="$OMNI_DIR/config/hosts.txt"
+export CONFIG_FILE="$OMNI_DIR/config/config.sh"
+export NMON_CMD="$OMNI_DIR/monitoring/nmon/bin/nmon"
 
 source "$CONFIG_FILE"
 

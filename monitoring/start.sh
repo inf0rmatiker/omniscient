@@ -6,11 +6,16 @@ if [ $# != 0 ]; then
   exit 1
 fi
 
-# Ensure commands are installed
-[ -z "$NMON_CMD" ] && echo "nmon not found" && exit 1
 
 # Starts an nmon monitor on a given host
 function start_nmon {
+
+  # Ensure nmon is installed
+  [ -z "$NMON_CMD" ] && echo "NMON_CMD variable not set." && exit 1
+  if ! command -v $NMON_CMD > /dev/null; then
+    echo "(NMON_CMD=$NMON_CMD): nmon not found or not accessible."
+    exit 1
+  fi
 
   HOST=$1
   DIRECTORY=$2
@@ -29,10 +34,14 @@ function start_nmon {
 # Starts an infiniband
 function start_ibmon {
 
+
+
+
+
   HOST=$1
   DIRECTORY=$2
-  IBMON_FILE="$DIRECTORY/$MON_ID.nmon"
-  IBMON_PID="$DIRECTORY/$MON_ID.nmon.pid"
+  IBMON_FILE="$DIRECTORY/$MON_ID-infiniband.txt"
+  IBMON_PID="$DIRECTORY/$MON_ID-infiniband.pid"
 
   if [ "$HOST" == "$(hostname)" ]; then
     # If we're on the current host, run the command locally
