@@ -17,6 +17,7 @@ COMMANDS:
 export USAGE
 
 OMNI_DIR=$(dirname "$0")
+OMNI_DIR=$(realpath -s $OMNI_DIR)
 export OMNI_DIR
 
 # Instance variables
