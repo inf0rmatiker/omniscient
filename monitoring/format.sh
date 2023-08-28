@@ -11,6 +11,10 @@ OUTPUT="$1"
 STRIPPED="${2%.*}"
 MON_ID=$(basename "$STRIPPED")
 
+echo "2=$2"
+echo "OUTPUT=$OUTPUT"
+echo "STRIPPED=$STRIPPED"
+
 OUTPUT="$OUTPUT : $MON_ID"
 
 # check if processes are running

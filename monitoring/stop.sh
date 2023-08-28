@@ -64,4 +64,6 @@ done <"$HOST_FILE"
 # wait for all to complete
 wait
 
+echo "$MON_ID : stopped" > /tmp/$MON_ID.omni
+
 echo "[/] stopped monitor with id '$1'"

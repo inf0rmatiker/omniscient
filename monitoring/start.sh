@@ -94,4 +94,6 @@ done < $HOST_FILE
 # Wait for all to complete
 wait
 
+echo "$MON_ID : running" > /tmp/$MON_ID.omni
+
 echo "[+] started monitor with id '$MON_ID'"

@@ -54,7 +54,11 @@ if [[ $USER_ID -ne 0 ]]; then
   exit 1
 fi
 
+# Write this script's process id to a file
 HOST=$(hostname)
+PID_FILE="$OUT_DIR/${HOST}_${MON_ID}.ibmon.pid"
+echo $$ > $PID_FILE
+
 declare -A IB_LIDS  # mapping IB device -> port LID e.g.) {"mlx5_0": 103}
 
 # Iterate over all $INFINIBAND_DEVICES (mlx5_0, mlx5_1, etc), and find the LID
