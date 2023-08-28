@@ -44,13 +44,14 @@ function start_ibmon {
 
   HOST=$1
   DIRECTORY=$2
+  COMMA_SEP_IB_DEVS=$(echo $INFINIBAND_DEVICES | xargs | tr -s '[:blank:]' '[,*]')
 
   if [ "$HOST" == "$(hostname)" ]; then
     # If we're on the current host, run the command locally
-    ($IBMON_CMD $DIRECTORY $MON_ID) &
+    ($IBMON_CMD $DIRECTORY $MON_ID $SNAPSHOT_SECONDS $TOTAL_SNAPSHOTS $COMMA_SEP_IB_DEVS $INFINIBAND_PORT) &
   else
     # Run the command remotely
-    (ssh $HOST -n -o ConnectTimeout=500 "$IBMON_CMD $DIRECTORY $MON_ID") &
+    (ssh $HOST -n -o ConnectTimeout=500 "$IBMON_CMD $DIRECTORY $MON_ID $SNAPSHOT_SECONDS $TOTAL_SNAPSHOTS $COMMA_SEP_IB_DEVS $INFINIBAND_PORT") &
   fi
 }
 

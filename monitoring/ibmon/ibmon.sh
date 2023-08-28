@@ -18,18 +18,20 @@
 #
 # These should be installed when you install the rdma-core package.
 
-if [[ $# -ne 2 ]]; then
-  echo "Usage: ibmon.sh <output_directory> <monitor_id>"
+if [[ $# -ne 6 ]]; then
+  echo "Usage: ibmon.sh <output_directory> <monitor_id> <snapshot_seconds> <total_snapshots> <infiniband_devices> <infiniband_port>"
   exit 1
 fi
 
 OUT_DIR=$1
 MON_ID=$2
+SNAPSHOT_SECONDS=$3
+TOTAL_SNAPSHOTS=$4
+INFINIBAND_DEVICES=$5
+INFINIBAND_PORT=$6
 
-echo "SNAPSHOT_SECONDS=$SNAPSHOT_SECONDS"
-echo "TOTAL_SNAPSHOTS=$TOTAL_SNAPSHOTS"
-echo "INFINIBAND_DEVICES=$INFINIBAND_DEVICES"
-echo "INFINIBAND_PORT=$INFINIBAND_PORT"
+# Transform comma-separated device list to space-separated
+INFINIBAND_DEVICES=$(echo $INFINIBAND_DEVICES | tr -s ',' ' ')
 
 # Sanity checking
 [ -z $SNAPSHOT_SECONDS ] && echo "Need to set SNAPSHOT_SECONDS env" && exit 1
