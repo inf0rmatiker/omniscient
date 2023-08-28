@@ -23,7 +23,6 @@ export OMNI_DIR
 export SCRIPT_DIR="$OMNI_DIR/monitoring"
 export HOST_FILE="$OMNI_DIR/config/hosts.txt"
 export CONFIG_FILE="$OMNI_DIR/config/config.sh"
-export NMON_CMD="$OMNI_DIR/monitoring/nmon/bin/nmon"
 
 source "$CONFIG_FILE"
 

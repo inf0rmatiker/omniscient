@@ -1,29 +1,65 @@
 #!/bin/bash
 
-# check arguments
+# Check arguments
 if [ $# != 1 ]; then
-    echo "$USAGE"
-    exit 1
+  echo "$USAGE"
+  exit 1
 fi
 
-# iterate over hosts
+# Stops the nmon monitor on a given host
+function stop_nmon {
+
+  HOST=$1
+  echo "Stopping nmon on host $HOST"
+  if [ "$HOST" == "$(hostname)" ]; then
+    # Stop monitor locally
+    kill $(ps -aux | grep '[n]mon' | awk '{print $2}')
+  else
+    # Stop monitor remotely
+    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[n]mon' | awk '{print \$2}')") &
+  fi
+}
+
+# Stops the InfiniBand monitor on a given host
+function stop_ibmon {
+
+  HOST=$1
+  echo "Stopping ibmon on host $HOST"
+  if [ "$HOST" == "$(hostname)" ]; then
+    # Stop monitor locally
+    kill $(ps -aux | grep '[i]bmon.sh' | awk '{print $2}')
+  else
+    # Stop monitor remotely
+    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[i]bmon.sh' | awk '{print \$2}')") &
+  fi
+}
+
+# Stops the free monitor on a given host
+function stop_free {
+
+  HOST=$1
+  echo "Stopping free monitor on host $HOST"
+  if [ "$HOST" == "$(hostname)" ]; then
+    # Stop monitor locally
+    kill $(ps -aux | grep '[f]ree.sh' | awk '{print $2}')
+  else
+    # Stop monitor remotely
+    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[f]ree.sh' | awk '{print \$2}')") &
+  fi
+}
+
+# Iterate over hosts
 while read -r LINE; do
-    # parse host and log directory
-    HOST=$(echo "$LINE" | awk '{print $1}')
-    DIRECTORY=$(echo "$LINE" | awk '{print $2}')
 
-    LOG_FILE="$DIRECTORY/$1"
+  # Parse host and log directory
+  HOST=$(echo "$LINE" | awk '{print $1}')
 
-    echo "stopping $HOST"
-    if [ "$HOST" == "$(hostname)" ]; then
-        # stop local monitors
-        # (kill $(cat "$LOG_FILE.pid")) &
-        kill $(ps -aux | grep '[n]mon' | awk '{print $2}')
-    else
-        # stop remote monitors
-        (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[n]mon' | awk '{print \$2}')") &
-    fi
-done < "$HOST_FILE"
+  # Stop monitors based on configuration
+  [[ $CAPTURE_NMON == "yes" ]] && stop_nmon $HOST
+  [[ $CAPTURE_IB == "yes" ]] && stop_ibmon $HOST
+  [[ $CAPTURE_FREE == "yes" ]] && stop_free $HOST
+
+done <"$HOST_FILE"
 
 # wait for all to complete
 wait
