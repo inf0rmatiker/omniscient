@@ -38,13 +38,16 @@ function stop_ibmon {
 function stop_free {
 
   HOST=$1
+  DIRECTORY=$2
+  STOP_FREE="$OMNI_DIR/monitoring/free/stop_all.sh $DIRECTORY"
+
   echo "Stopping free monitor on host $HOST"
   if [ "$HOST" == "$(hostname)" ]; then
     # Stop monitor locally
-    kill $(ps -aux | grep '[f]ree.sh' | awk '{print $2}')
+    ($STOP_FREE) &
   else
     # Stop monitor remotely
-    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[f]ree.sh' | awk '{print \$2}')") &
+    (ssh "$HOST" -n -o ConnectTimeout=500 $STOP_FREE) &
   fi
 }
 

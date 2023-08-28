@@ -58,7 +58,7 @@ function start_ibmon {
 function start_free {
 
   # Ensure free is accessible
-  FREE_CMD="free"
+  FREE="$OMNI_DIR/monitoring/free/start_all.sh"
   if ! command -v $FREE_CMD > /dev/null; then
     echo "Unable to run or access '$FREE_CMD'"
     exit 1
@@ -68,7 +68,12 @@ function start_free {
   DIRECTORY=$2
 
   # Launch free monitor on host
-  echo "TODO: This is just a placeholder for launching 'free' monitor on host"
+  if [ "$HOST" == "$(hostname)" ]; then
+    # If we're on the current host, run the command locally
+    ($FREE_CMD) &
+  else
+    # Run the command remotely
+    (ssh $HOST -n -o ConnectTimeout=500 "$FREE_CMD") &
 }
 
 MON_ID="$USER-$(date +%Y%m%d-%H%M%S)"
