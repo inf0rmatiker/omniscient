@@ -10,7 +10,7 @@ fi
 function start_nmon {
 
   # Ensure nmon is accessible
-  NMON_CMD="$OMNI_DIR/monitoring/nmon/bin/nmon"
+  NMON_CMD="$SCRIPT_DIR/nmon/bin/nmon"
   [ ! -f $NMON_CMD ] && echo "$NMON_CMD not found." && exit 1
   if ! command -v $NMON_CMD > /dev/null; then
     echo "Unable to run or access '$NMON_CMD'"
@@ -35,7 +35,7 @@ function start_nmon {
 function start_ibmon {
 
   # Ensure ibmon.sh is accessible
-  IBMON_CMD="$OMNI_DIR/monitoring/ibmon/ibmon.sh"
+  IBMON_CMD="$SCRIPT_DIR/ibmon/ibmon.sh"
   [ ! -f $IBMON_CMD ] && echo "$IBMON_CMD not found." && exit 1
   if ! command -v $IBMON_CMD > /dev/null; then
     echo "Unable to run or access '$IBMON_CMD'"
