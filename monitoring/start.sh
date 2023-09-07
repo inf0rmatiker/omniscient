@@ -44,7 +44,7 @@ function start_ibmon {
 
   HOST=$1
   DIRECTORY=$2
-  COMMA_SEP_IB_DEVS=$(echo $INFINIBAND_DEVICES | xargs | tr -s '[:blank:]' '[,*]')
+  COMMA_SEP_IB_DEVS=$(echo $INFINIBAND_DEVS | xargs | tr -s '[:blank:]' '[,*]')
 
   if [ "$HOST" == "$(hostname)" ]; then
     # If we're on the current host, run the command locally

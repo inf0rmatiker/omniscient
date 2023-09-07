@@ -10,7 +10,7 @@ export NMON_METRICS="CPU_ALL:User% CPU_ALL:Sys% DISKBUSY:nvme0n1 DISKREAD:nvme0n
 
 ## InfiniBand configuration
 export CAPTURE_IB="yes"
-export INFINIBAND_CARDS="mlx5_0 mlx5_1"  # which IB cards do we want to monitor
+export INFINIBAND_DEVS="mlx5_0 mlx5_1"  # which IB cards do we want to monitor
 export INFINIBAND_PORT=1
 
 ## free configuration (memory pressure)
