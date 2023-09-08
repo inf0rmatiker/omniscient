@@ -19,7 +19,18 @@
 # These should be installed when you install the rdma-core package.
 
 if [[ $# -ne 6 ]]; then
-  echo "Usage: ibmon.sh <output_directory> <monitor_id> <snapshot_seconds> <total_snapshots> <infiniband_devices> <infiniband_port>"
+  echo -e "Usage:\n\tibmon.sh <output_directory> <monitor_id> <snapshot_seconds> <total_snapshots> <infiniband_devices> <infiniband_port>\n"
+  echo -e "Arguments:"
+  echo -e "\toutput_dir: The directory you want the snapshot results to go to."
+  echo -e "\tmonitor_id: The unique ID of the monitor session."
+  echo -e "\t\tThis could be either a number, date string, or UUID -- really whatever you want."
+  echo -e "\tsnapshot_seconds: The interval between snapshots in seconds. Default is usually 1."
+  echo -e "\ttotal_snapshots: The total amount of snapshots you wish to take before exiting."
+  echo -e "\tib_devices: A comma-separated string of mlx5 device names you wish to monitor."
+  echo -e "\tdevice_port: The port ID on each device you wish to monitor. Only 1 port is supported for monitoring currently."
+  echo -e "\t\tDefault is 1 for the first port.\n"
+  echo -e "Example:"
+  echo -e "\t./ibmon.sh /tmp/ccarlson/ \$(date +%s) 1 5 mlx5_0,mlx5_1,mlx5_2,mlx5_3,mlx5_4 1"
   exit 1
 fi
 

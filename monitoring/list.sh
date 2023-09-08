@@ -8,6 +8,7 @@ if [ $# != 0 ]; then
     exit 1
 fi
 
+
 # Iterate over hosts
 while read -r LINE; do
 
@@ -17,10 +18,10 @@ while read -r LINE; do
 
     if [ "$HOST" == "$(hostname)" ]; then
         # List local monitors
-        (find "$DIRECTORY" -name "*pid" -exec bash "$SCRIPT_DIR/format.sh" "$HOST" {} \;) &
+        ($SCRIPT_DIR/monitor_statuses.sh $DIRECTORY) &
     else
         # List remote monitors
-        (ssh "$HOST" -n -o ConnectTimeout=500 "find $DIRECTORY -name \"*pid\" -exec bash $SCRIPT_DIR/format.sh '$HOST' {} \;") &
+        (ssh "$HOST" -n -o ConnectTimeout=500 "$SCRIPT_DIR/monitor_statuses.sh $DIRECTORY") &
     fi
 done < "$HOST_FILE"
 

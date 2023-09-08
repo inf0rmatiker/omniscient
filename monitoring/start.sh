@@ -44,14 +44,13 @@ function start_ibmon {
 
   HOST=$1
   DIRECTORY=$2
-  COMMA_SEP_IB_DEVS=$(echo $INFINIBAND_DEVS | xargs | tr -s '[:blank:]' '[,*]')
 
   if [ "$HOST" == "$(hostname)" ]; then
     # If we're on the current host, run the command locally
-    ($IBMON_CMD $DIRECTORY $MON_ID $SNAPSHOT_SECONDS $TOTAL_SNAPSHOTS $COMMA_SEP_IB_DEVS $INFINIBAND_PORT) &
+    ($IBMON_CMD $DIRECTORY $MON_ID $SNAPSHOT_SECONDS $TOTAL_SNAPSHOTS $INFINIBAND_DEVS $INFINIBAND_PORT) &
   else
     # Run the command remotely
-    (ssh $HOST -n -o ConnectTimeout=500 "$IBMON_CMD $DIRECTORY $MON_ID $SNAPSHOT_SECONDS $TOTAL_SNAPSHOTS $COMMA_SEP_IB_DEVS $INFINIBAND_PORT") &
+    (ssh $HOST -n -o ConnectTimeout=500 "$IBMON_CMD $DIRECTORY $MON_ID $SNAPSHOT_SECONDS $TOTAL_SNAPSHOTS $INFINIBAND_DEVS $INFINIBAND_PORT") &
   fi
 }
 
@@ -72,6 +71,7 @@ function start_free {
   echo "TODO: This is just a placeholder for launching 'free' monitor on host"
 }
 
+# Set the monitor ID to the date in the format YYYYmmdd-HHMMSS, e.g. 20230908-200457
 MON_ID="$USER-$(date +%Y%m%d-%H%M%S)"
 
 # Iterate over hosts
