@@ -57,9 +57,9 @@ while read -r LINE; do
     # Copy remote data to collect directory
     scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv" "${OUTPUT_DIR}/${HOST}.nmon.csv"
     ssh $HOST -n -o ConnectTimeout=500 \
-      "cd $DIRECTORY && tar -cvf \"${HOST}_${MONITOR}.tar\" ${HOST}_*${MONITOR_ID}.csv"
-    scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR}.tar" $OUTPUT_DIR
-    tar -xvf "${OUTPUT_DIR}/${HOST}_${MONITOR}.tar" && rm "${OUTPUT_DIR}/${HOST}_${MONITOR}.tar"
+      "cd $DIRECTORY && tar -cvf \"${HOST}_${MONITOR_ID}.tar\" ${HOST}_*${MONITOR_ID}.csv"
+    scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR_ID}.tar" $OUTPUT_DIR
+    tar -xvf "${OUTPUT_DIR}/${HOST}_${MONITOR_ID}.tar" && rm "${OUTPUT_DIR}/${HOST}_${MONITOR_ID}.tar"
   fi
 
 done < $HOST_FILE
