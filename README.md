@@ -7,6 +7,7 @@
     + [Configuration](#configuration)
   * [Usage](#usage)
     + [Synopsis](#synopsis)
+    + [Initialization](#initialization)
     + [Start Monitor](#start-monitor)
     + [Listing Monitors](#listing-monitors)
     + [Stopping Monitor](#stopping-monitor)
