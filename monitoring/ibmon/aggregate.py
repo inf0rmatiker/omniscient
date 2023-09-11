@@ -52,15 +52,76 @@ def find_csv_files(directory: str, monitor_id: str) -> dict:
     return grouped_by_node
 
 
-def aggregate_results(csv_files: dict, monitor_id: str, out_dir: str) -> None:
+def aggregate_results_per_cluster(
+        csv_files: dict,
+        monitor_id: str,
+        out_dir: str) -> None:
     """
-    Aggregates all the results together on a per-node basis.
+    Aggregate host-based IB results together on a per-cluster basis.
 
-    :param csv_files: Mapping of hostnames to a list of CSV files.
+    :param csv_files: Dict of host-based CSV files to aggregate together
     :param monitor_id: String monitor ID.
     :param out_dir: String output directory for aggregate CSV file.
     :return: Nothing.
     """
+
+    dataframes = list()
+    unique_sum_keys = set()
+
+    for hostname, csv_file in csv_files.items():
+        df = pd.read_csv(csv_file, header=0)
+
+        # Rename all non-timestamp columns to append hostname as suffix
+        for column in df:
+            if column != "timestamp":
+                if column not in unique_sum_keys and "_sum" in column:
+                    unique_sum_keys.add(column)
+                df = df.rename(columns={column: f"{column}_{hostname}"})
+
+        dataframes.append(df)
+
+    if len(dataframes) == 1:
+        log.info("Only 1 host to aggregate...")
+
+    log.info("Merging multiple dataframes together...")
+    left_df = dataframes[0]
+    for i in range(1, len(dataframes)):
+        right_df = dataframes[i]
+
+        # Merge all DFs together, so we have a column per device
+        left_df = left_df.merge(right_df, how="left", on="timestamp")
+
+    # Sum all the host sum values to a <key>_aggregate column.
+    for key in unique_sum_keys:
+        columns_sharing_key = [x for x in left_df.columns if key in x]
+        log.debug(f"columns sharing key {key}: {columns_sharing_key}")
+
+        # Sum all columns sharing this common key and add as new column
+        left_df[f"{key}_aggregate"] = left_df[columns_sharing_key].sum(axis=1)
+
+    # Save DataFrame as aggregate CSV file
+    out_filename = f"{monitor_id}_total_aggregate.ibmon.csv"
+    out_full_path = os.path.join(out_dir, out_filename)
+    log.info(f"Saving {out_full_path}")
+    left_df.to_csv(out_full_path, sep=",", header=True, index=False)
+
+
+def aggregate_results_per_node(
+        csv_files: dict,
+        monitor_id: str,
+        out_dir: str) -> dict:
+    """
+    Aggregates all the IB-device results together on a per-node basis.
+
+    :param csv_files: Mapping of hostnames to a list of CSV files.
+    :param monitor_id: String monitor ID.
+    :param out_dir: String output directory for aggregate CSV file.
+    :return: Dict of host-based CSV files where all the IB device data is
+        aggregated.
+    """
+
+    # List of host-based CSV filenames that we'll aggregate later.
+    host_csv_files = dict()
 
     # Iterate over csv lists; for each host, there's a CSV file per device.
     # example hostname: n01
@@ -86,7 +147,6 @@ def aggregate_results(csv_files: dict, monitor_id: str, out_dir: str) -> None:
                 continue
 
             # Rename all non-timestamp columns to append device name as suffix
-
             for column in df:
                 if column != "timestamp":
                     if column not in unique_column_keys:
@@ -114,10 +174,13 @@ def aggregate_results(csv_files: dict, monitor_id: str, out_dir: str) -> None:
             left_df[f"{key}_sum"] = left_df[columns_sharing_key].sum(axis=1)
 
         # Save DataFrame as aggregate CSV file
-        out_filename = f"{hostname}_{monitor_id}_aggregate.csv"
+        out_filename = f"{hostname}_{monitor_id}_host_aggregate.ibmon.csv"
         out_full_path = os.path.join(out_dir, out_filename)
         log.info(f"Saving {out_full_path}")
         left_df.to_csv(out_full_path, sep=",", header=True, index=False)
+        host_csv_files[hostname] = out_full_path
+
+    return host_csv_files
 
 
 def main():
@@ -156,7 +219,11 @@ def main():
     if not csv_files:
         exit(1)
 
-    aggregate_results(csv_files, monitor_id, results_dir)
+    host_csv_files = aggregate_results_per_node(
+        csv_files, monitor_id, results_dir)
+
+    aggregate_results_per_cluster(host_csv_files, monitor_id, results_dir)
+
 
 
 if __name__ == '__main__':
