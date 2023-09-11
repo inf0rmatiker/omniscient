@@ -93,7 +93,7 @@ while read -r LINE; do
 done < $HOST_FILE
 
 # Wait for all to complete
-wait
+# wait
 
 echo "$MON_ID : running" > /tmp/$MON_ID.omni
 
