@@ -1,5 +1,21 @@
 # Omniscient
 
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [Omniscient](#omniscient)
+  * [Installation](#installation)
+    + [Configuration](#configuration)
+  * [Usage](#usage)
+    + [Synopsis](#synopsis)
+    + [Start Monitor](#start-monitor)
+    + [Listing Monitors](#listing-monitors)
+    + [Stopping Monitor](#stopping-monitor)
+    + [Collecting Monitor Data](#collecting-monitor-data)
+    + [Remove Monitor](#remove-monitor)
+    + [Cleanup](#cleanup)
+
+<!-- TOC end -->
+
 A collection of scripts to facilitate distributed resource monitoring. This is a modified version of 
 [hamersaw/omniscient](https://github.com/hamersaw/omniscient); credit goes to [Dan Rammer](https://github.com/hamersaw)
 for authoring the original version.
@@ -46,23 +62,6 @@ Configuration is performed by editing the files in the [config/](config) directo
 
 ## Usage
 
-### Start Monitor
-
-Launch a monitor by running:
-
-```bash
-omni start
-```
-
-Starting monitors is performed by remotely SSHing into each node and launching the monitor binaries. Example:
-
-```console
-[ccarlson@n01 omniscient]$ ./omni start
-[+] started monitor with id 'ccarlson-20230822-163709'
-```
-
-> *Take note of the monitor id that was generated; you'll need this to stop the monitor.*
-
 ### Synopsis
 
 Use `omni help` to view a synopsis:
@@ -80,6 +79,23 @@ COMMANDS:
     cleanup                             clean up omni logs/directories.
     version                             print application version.
 ```
+
+### Start Monitor
+
+Launch a monitor by running:
+
+```bash
+omni start
+```
+
+Starting monitors is performed by remotely SSHing into each node and launching the monitor binaries. Example:
+
+```console
+[ccarlson@n01 omniscient]$ ./omni start
+[+] started monitor with id 'ccarlson-20230822-163709'
+```
+
+> *Take note of the monitor id that was generated; you'll need this to stop the monitor.*
 
 ### Listing Monitors
 
@@ -141,7 +157,7 @@ Stopping free monitor on host o186i222
 
 > *You can use this to stop a monitor before it has completed all its snapshots.*
 
-## Collecting Monitor Data
+### Collecting Monitor Data
 
 After the monitors have been stopped, they will have left `.nmon`, `ibmon.csv`, and `.free.csv` output files
 in their local directories specified by the `hosts.txt` file. As it stands, these files
