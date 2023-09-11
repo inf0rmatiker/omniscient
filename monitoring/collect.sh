@@ -51,8 +51,8 @@ while read -r LINE; do
 
   if [ "$HOST" == "$(hostname)" ]; then
     # Copy local data to collect directory
-    cp "${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv" "${OUTPUT_DIR}/${HOST}.nmon.csv"
-    cp "${DIRECTORY}/${HOST}_*${MONITOR_ID}.csv" $OUTPUT_DIR
+    cp ${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv ${OUTPUT_DIR}/${HOST}.nmon.csv
+    cp ${DIRECTORY}/${HOST}_*${MONITOR_ID}.csv $OUTPUT_DIR
   else
     # Copy remote data to collect directory
     scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv" "${OUTPUT_DIR}/${HOST}.nmon.csv"
