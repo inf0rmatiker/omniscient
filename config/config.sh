@@ -14,4 +14,3 @@ export NMON_METRICS="CPU_ALL:User% CPU_ALL:Sys% DISKBUSY:nvme0n1 DISKREAD:nvme0n
 ## ibmon configuration
 export INFINIBAND_DEVS="mlx5_0,mlx5_1"  # which IB devices do we want to monitor, comma-separated
 export INFINIBAND_PORT=1  # which port on the IB devices do we want to monitor (recommend 1).
-
