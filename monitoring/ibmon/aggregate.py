@@ -28,7 +28,7 @@ def find_csv_files(directory: str, monitor_id: str) -> dict:
                     'example/o186i221_mlx5_2_154_1234.csv',
                     'example/o186i221_mlx5_0_152_1234.csv'] }
     """
-    csv_files = [x for x in os.listdir(directory) if x.endswith(".csv")
+    csv_files = [x for x in os.listdir(directory) if x.endswith(".ibmon.csv")
                  and monitor_id in x and "aggregate" not in x]
 
     if len(csv_files) == 0:

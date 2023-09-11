@@ -52,12 +52,12 @@ while read -r LINE; do
   if [ "$HOST" == "$(hostname)" ]; then
     # Copy local data to collect directory
     cp ${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv ${OUTPUT_DIR}/${HOST}.nmon.csv
-    cp ${DIRECTORY}/${HOST}_*${MONITOR_ID}.csv $OUTPUT_DIR
+    cp ${DIRECTORY}/${HOST}_*${MONITOR_ID}.ibmon.csv $OUTPUT_DIR
   else
     # Copy remote data to collect directory
     scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv" "${OUTPUT_DIR}/${HOST}.nmon.csv"
     ssh $HOST -n -o ConnectTimeout=500 \
-      "cd $DIRECTORY && tar -cvf \"${HOST}_${MONITOR_ID}.tar\" ${HOST}_*${MONITOR_ID}.csv"
+      "cd $DIRECTORY && tar -cvf \"${HOST}_${MONITOR_ID}.tar\" ${HOST}_*${MONITOR_ID}.ibmon.csv"
     scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR_ID}.tar" $OUTPUT_DIR
     cd $OUTPUT_DIR && tar -xvf "${OUTPUT_DIR}/${HOST}_${MONITOR_ID}.tar" && rm "${OUTPUT_DIR}/${HOST}_${MONITOR_ID}.tar"
   fi

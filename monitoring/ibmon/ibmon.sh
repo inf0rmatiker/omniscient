@@ -87,7 +87,7 @@ for IB_DEV in $INFINIBAND_DEVICES; do
   IB_LIDS["$IB_DEV"]=$PORT_LID
   # echo "DEBUG: Port LID for $IB_DEV, port $INFINIBAND_PORT: $PORT_LID"
   # Capture headers to CSV file
-  OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.csv"
+  OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.ibmon.csv"
   echo -n "timestamp," > $OUT_FILE
   perfquery $PORT_LID $INFINIBAND_PORT | tail -5 | grep -o -P "^Port\w+" | xargs | tr -s '[:blank:]' '[,*]' >> $OUT_FILE
 done
@@ -99,7 +99,7 @@ while [[ i -lt $TOTAL_SNAPSHOTS ]]; do
   # Iterate over all IB devices and capture perfquery output for each one.
   for IB_DEV in "${!IB_LIDS[@]}"; do
     PORT_LID=${IB_LIDS[$IB_DEV]}
-    OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.csv"
+    OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.ibmon.csv"
 
     # Write the snapshot index, followed by the 5 values separated by commas
     echo -en "$i," >> $OUT_FILE
