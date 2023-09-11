@@ -45,10 +45,10 @@ INFINIBAND_PORT=$6
 INFINIBAND_DEVICES=$(echo $INFINIBAND_DEVICES | tr -s ',' ' ')
 
 # Sanity checking
-[ -z $SNAPSHOT_SECONDS ] && echo "Need to set SNAPSHOT_SECONDS env" && exit 1
-[ -z $TOTAL_SNAPSHOTS ] && echo "Need to set TOTAL_SNAPSHOTS env" && exit 1
-[ -z $INFINIBAND_DEVICES ] && echo "Need to set INFINIBAND_DEVICES env" && exit 1
-[ -z $INFINIBAND_PORT ] && echo "Need to set INFINIBAND_PORT env" && exit 1
+[ -z "$SNAPSHOT_SECONDS" ] && echo "Need to set SNAPSHOT_SECONDS env" && exit 1
+[ -z "$TOTAL_SNAPSHOTS" ] && echo "Need to set TOTAL_SNAPSHOTS env" && exit 1
+[ -z "$INFINIBAND_DEVICES" ] && echo "Need to set INFINIBAND_DEVICES env" && exit 1
+[ -z "$INFINIBAND_PORT" ] && echo "Need to set INFINIBAND_PORT env" && exit 1
 [ ! -d $OUT_DIR ] && echo "'$OUT_DIR' is not a directory or does not exist" && exit 1
 
 # Check that perfquery is installed
