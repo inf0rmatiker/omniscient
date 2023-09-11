@@ -85,7 +85,7 @@ for IB_DEV in $INFINIBAND_DEVICES; do
 
   PORT_LID=$(ibv_devinfo --ib-dev=$IB_DEV --ib-port=$INFINIBAND_PORT | grep port_lid | xargs | awk '{print $2}')
   IB_LIDS["$IB_DEV"]=$PORT_LID
-  echo "Port LID for $IB_DEV, port $INFINIBAND_PORT: $PORT_LID"
+  # echo "DEBUG: Port LID for $IB_DEV, port $INFINIBAND_PORT: $PORT_LID"
   # Capture headers to CSV file
   OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.csv"
   echo -n "timestamp," > $OUT_FILE
