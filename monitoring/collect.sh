@@ -24,14 +24,14 @@ while read -r LINE; do
   if [ "$HOST" == "$(hostname)" ]; then
 
     # Convert local nmon to csv
-    (python3 "$SCRIPT_DIR/nmon2csv.py" "${DIRECTORY}/${MONITOR_ID}.nmon" \
+    (python3 "$SCRIPT_DIR/nmon/nmon2csv.py" "${DIRECTORY}/${MONITOR_ID}.nmon" \
       --metrics="$NMON_METRICS" > "${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv") &
 
   else
 
     # Convert remote nmon to csv
     (ssh "$HOST" -n -o ConnectTimeout=500 \
-      "python3 $SCRIPT_DIR/nmon2csv.py ${DIRECTORY}/${MONITOR_ID}.nmon \
+      "python3 $SCRIPT_DIR/nmon/nmon2csv.py ${DIRECTORY}/${MONITOR_ID}.nmon \
         --metrics=\"$NMON_METRICS\" > ${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv") &
 
   fi
@@ -67,6 +67,6 @@ done < $HOST_FILE
 echo "[+] downloaded host monitor files"
 
 # Combine host monitor files
-python3 $SCRIPT_DIR/csv-merge.py $OUTPUT_DIR/*nmon.csv > "$OUTPUT_DIR/aggregate.nmon.csv"
+python3 $SCRIPT_DIR/nmon/csv-merge.py $OUTPUT_DIR/*nmon.csv > "$OUTPUT_DIR/aggregate.nmon.csv"
 
 echo "[+] combined host monitor files"
