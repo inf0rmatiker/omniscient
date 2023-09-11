@@ -16,10 +16,10 @@ while read -r LINE; do
 
   if [ "$HOST" == "$(hostname)" ]; then
     # Remove local monitor data and pid files
-    (rm $DIRECTORY/${HOST}*${MONITOR_ID}*.*) &
+    (rm $DIRECTORY/${HOST}_*${MONITOR_ID}*.* $DIRECTORY/$HOST.nmon) &
   else
     # Remove remote monitors data and pid files
-    (ssh "$HOST" -n -o ConnectTimeout=500 "rm $DIRECTORY/${HOST}*${MONITOR_ID}*.*") &
+    (ssh "$HOST" -n -o ConnectTimeout=500 "rm $DIRECTORY/${HOST}_*${MONITOR_ID}*.* $DIRECTORY/$HOST.nmon") &
   fi
 done <"$HOST_FILE"
 
