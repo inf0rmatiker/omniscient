@@ -7,6 +7,7 @@
     + [Configuration](#configuration)
   * [Usage](#usage)
     + [Synopsis](#synopsis)
+    + [Initialization](#initialization)
     + [Start Monitor](#start-monitor)
     + [Listing Monitors](#listing-monitors)
     + [Stopping Monitor](#stopping-monitor)
@@ -83,6 +84,25 @@ COMMANDS:
     stop <monitor-id>                   stop a monitor.
     cleanup                             clean up omni logs/directories.
     version                             print application version.
+```
+
+### Initialization
+
+_STOP!_ Before you try to create, delete, or manage monitors, you need to initialize
+omniscient's working environment for each of the nodes it will be running on.
+
+Set up your [hosts.txt](#configuration) file correctly then run:
+
+```bash
+omni init
+```
+
+Example:
+
+```console
+root@o186i221:~/ccarlson/tempdir# omni init
+Created /tmp/omniscient on o186i221
+Created /tmp/omniscient on o186i222
 ```
 
 ### Start Monitor
