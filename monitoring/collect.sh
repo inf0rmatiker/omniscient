@@ -14,7 +14,7 @@ if [ ! -d $OUTPUT_DIR ]; then
   mkdir -p $OUTPUT_DIR
 fi
 
-# Iterate over hosts and collect capture files into a tarball
+# Iterate over hosts and convert nmon to csv
 while read -r LINE; do
 
   # Parse host and log directory
@@ -22,48 +22,51 @@ while read -r LINE; do
   DIRECTORY=$(echo "$LINE" | awk '{print $2}')
 
   if [ "$HOST" == "$(hostname)" ]; then
-    tar -cvf "${DIRECTORY}/${HOST}_${MONITOR}.tar" $(find $DIRECTORY -name "${HOST}_*${MONITOR_ID}.csv ${HOST}_*${MONITOR_ID}.csv")
 
     # Convert local nmon to csv
-    ([ ! -f "$LOG_FILE.nmon.csv" ] &&
-      python3 "$SCRIPT_DIR/nmon2csv.py" "$LOG_FILE.nmon" --metrics="$NMON_METRICS" >"$LOG_FILE.nmon.csv") &
+    (python3 "$SCRIPT_DIR/nmon2csv.py" "${DIRECTORY}/${MONITOR_ID}.nmon" \
+      --metrics="$NMON_METRICS" > "${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv") &
+
   else
+
     # Convert remote nmon to csv
     (ssh "$HOST" -n -o ConnectTimeout=500 \
-      "[ ! -f \"$LOG_FILE.nmon.csv\" ] && \
-                python3 $SCRIPT_DIR/nmon2csv.py $LOG_FILE.nmon --metrics=\"$NMON_METRICS\" \
-                    > $LOG_FILE.nmon.csv") &
+      "python3 $SCRIPT_DIR/nmon2csv.py ${DIRECTORY}/${MONITOR_ID}.nmon \
+        --metrics=\"$NMON_METRICS\" > ${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv") &
+
   fi
 done <"$HOST_FILE"
 
 # Wait for all to complete
 wait
 
-echo "[+] compiled nmon csv files"
+echo "[+] compiled nmon to csv files"
 
 # Iterate over hosts
-NODE_ID=0
 while read -r LINE; do
+
   # parse host and log directory
   HOST=$(echo "$LINE" | awk '{print $1}')
   DIRECTORY=$(echo "$LINE" | awk '{print $2}')
 
-  LOG_FILE="$DIRECTORY/$1"
-
   if [ "$HOST" == "$(hostname)" ]; then
     # Copy local data to collect directory
-    cp "$LOG_FILE.nmon.csv" "$2/$NODE_ID-$HOST.nmon.csv"
+    cp "${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv" "${OUTPUT_DIR}/${HOST}.nmon.csv"
+    cp "${DIRECTORY}/${HOST}_*${MONITOR_ID}.csv" $OUTPUT_DIR
   else
     # Copy remote data to collect directory
-    scp "$HOST:$LOG_FILE.nmon.csv" "$2/$NODE_ID-$HOST.nmon.csv"
+    scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR_ID}.nmon.csv" "${OUTPUT_DIR}/${HOST}.nmon.csv"
+    ssh $HOST -n -o ConnectTimeout=500 \
+      "cd $DIRECTORY && tar -cvf \"${HOST}_${MONITOR}.tar\" ${HOST}_*${MONITOR_ID}.csv"
+    scp "${HOST}:${DIRECTORY}/${HOST}_${MONITOR}.tar" $OUTPUT_DIR
+    tar -xvf "${OUTPUT_DIR}/${HOST}_${MONITOR}.tar" && rm "${OUTPUT_DIR}/${HOST}_${MONITOR}.tar"
   fi
 
-  NODE_ID=$((NODE_ID + 1))
-done <"$HOST_FILE"
+done < $HOST_FILE
 
 echo "[+] downloaded host monitor files"
 
 # Combine host monitor files
-python3 "$SCRIPT_DIR/csv-merge.py" "$2"/*nmon.csv >"$2/aggregate.nmon.csv"
+python3 $SCRIPT_DIR/csv-merge.py $OUTPUT_DIR/*nmon.csv > "$OUTPUT_DIR/aggregate.nmon.csv"
 
 echo "[+] combined host monitor files"
