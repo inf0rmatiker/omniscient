@@ -46,19 +46,24 @@ export PATH="$PATH:/home/ccarlson/omniscient"
 Configuration is performed by editing the files in the [config/](config) directory. The files in this directory are:
 
 1. [**config.sh**](config/config.sh): This is a simple bash script used to export and provide easy modification of configuration variables.
-   * `SNAPSHOT_SECONDS` Interval between snapshots (in seconds).
-   * `TOTAL_SNAPSHOTS` How many snapshots to take of the system before terminating.
-   * `CAPTURE_NMON` Whether or not to capture `nmon` metrics.
-   * `CAPTURE_FREE` Whether or not to capture memory pressure metrics.
-   * `CAPTURE_IBMON` Whether or not to capture InfiniBand metrics.
-   * `NMON_METRICS` Which `nmon` metrics you'd like to capture
-   * `INFINIBAND_DEVS` Comma-separated list of IB device names to monitor.
-   * `INFINIBAND_PORT` Port on the devices you want to monitor.
+   * **General Configuration** 
+      * `SNAPSHOT_SECONDS` Interval between snapshots (in seconds). Default: `1`
+      * `TOTAL_SNAPSHOTS` How many snapshots to take of the system before terminating.
+      * `CAPTURE_NMON` Whether or not to capture `nmon` metrics. Default: `yes`
+      * `CAPTURE_FREE` Whether or not to capture memory pressure metrics. Default: `yes`
+      * `CAPTURE_IBMON` Whether or not to capture InfiniBand metrics. Default: `yes`
+   * **NMON-specific Configuration** 
+      * `NMON_METRICS` Which `nmon` metrics you'd like to capture
+        * These are `nmon`-specific header names. View a raw `.nmon` capture file for options.
+   * **IBMON-specific Configuration**
+      * `INFINIBAND_DEVS` Comma-separated list of IB device names to monitor.
+        * Example: `mlx5_0,mlx5_1,mlx5_2`
+      * `INFINIBAND_PORT` Port on the devices you want to monitor. Default: `1`
    
 2. [**hosts.txt**](config/hosts.txt): A file containing cluster host information. Each line is a `hostname log_directory` pair.
    * `log_directory` is the local directory on the machines you're monitoring where you wish to store the monitoring output. 
      A good value for this is `/tmp/omniscient`. These logs will be collected after monitoring is completed and aggregated to 
-     a single location for post-processing.
+     a single location for post-processing. DO NOT end the directory path with a `/`.
 
 ## Usage
 
