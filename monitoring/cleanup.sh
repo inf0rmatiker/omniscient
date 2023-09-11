@@ -16,9 +16,9 @@ while read -r LINE; do
 
     if [ "$HOST" == "$(hostname)" ]; then
         # clean up local monitors
-        rm "$DIRECTORY"/*.nmon $DIRECTORY/*.nmon.csv $DIRECTORY/*.pid
+        rm $DIRECTORY/*.nmon $DIRECTORY/*.pid $DIRECTORY/$HOST*.csv
     else
         # clean up remote monitors
-        ssh "$HOST" -n -o ConnectTimeout=500 "rm $DIRECTORY/*.nmon $DIRECTORY/*.nmon.csv $DIRECTORY/*.pid"
+        ssh "$HOST" -n -o ConnectTimeout=500 "rm $DIRECTORY/*.nmon $DIRECTORY/*.pid $DIRECTORY/$HOST*.csv"
     fi
 done < "$HOST_FILE"

@@ -13,10 +13,10 @@ function stop_nmon {
   echo "Stopping nmon on host $HOST"
   if [ "$HOST" == "$(hostname)" ]; then
     # Stop monitor locally
-    kill $(ps -aux | grep '[n]mon' | awk '{print $2}')
+    kill $(ps -aux | grep '[n]mon' | awk '{print $2}') &> /dev/null
   else
     # Stop monitor remotely
-    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[n]mon' | awk '{print \$2}')") &
+    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[n]mon' | awk '{print \$2}') &> /dev/null") &
   fi
 }
 
@@ -27,10 +27,10 @@ function stop_ibmon {
   echo "Stopping ibmon on host $HOST"
   if [ "$HOST" == "$(hostname)" ]; then
     # Stop monitor locally
-    kill $(ps -aux | grep '[i]bmon.sh' | awk '{print $2}')
+    kill $(ps -aux | grep '[i]bmon.sh' | awk '{print $2}') &> /dev/null
   else
     # Stop monitor remotely
-    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[i]bmon.sh' | awk '{print \$2}')") &
+    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[i]bmon.sh' | awk '{print \$2}') &> /dev/null") &
   fi
 }
 
@@ -41,10 +41,10 @@ function stop_free {
   echo "Stopping free monitor on host $HOST"
   if [ "$HOST" == "$(hostname)" ]; then
     # Stop monitor locally
-    kill $(ps -aux | grep '[f]ree.sh' | awk '{print $2}')
+    kill $(ps -aux | grep '[f]ree.sh' | awk '{print $2}') &> /dev/null
   else
     # Stop monitor remotely
-    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[f]ree.sh' | awk '{print \$2}')") &
+    (ssh "$HOST" -n -o ConnectTimeout=500 "kill \$(ps -aux | grep '[f]ree.sh' | awk '{print \$2}') &> /dev/null") &
   fi
 }
 

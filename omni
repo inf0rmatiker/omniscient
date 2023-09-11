@@ -25,6 +25,11 @@ export SCRIPT_DIR="$OMNI_DIR/monitoring"
 export HOST_FILE="$OMNI_DIR/config/hosts.txt"
 export CONFIG_FILE="$OMNI_DIR/config/config.sh"
 
+# Debug output
+#echo "DEBUG: SCRIPT_DIR=$SCRIPT_DIR"
+#echo "DEBUG: HOST_FILE=$HOST_FILE"
+#echo "DEBUG: CONFIG_FILE=$CONFIG_FILE"
+
 source "$CONFIG_FILE"
 
 # execute command

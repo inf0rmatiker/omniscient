@@ -19,7 +19,18 @@
 # These should be installed when you install the rdma-core package.
 
 if [[ $# -ne 6 ]]; then
-  echo "Usage: ibmon.sh <output_directory> <monitor_id> <snapshot_seconds> <total_snapshots> <infiniband_devices> <infiniband_port>"
+  echo -e "Usage:\n\tibmon.sh <output_directory> <monitor_id> <snapshot_seconds> <total_snapshots> <infiniband_devices> <infiniband_port>\n"
+  echo -e "Arguments:"
+  echo -e "\toutput_dir: The directory you want the snapshot results to go to."
+  echo -e "\tmonitor_id: The unique ID of the monitor session."
+  echo -e "\t\tThis could be either a number, date string, or UUID -- really whatever you want."
+  echo -e "\tsnapshot_seconds: The interval between snapshots in seconds. Default is usually 1."
+  echo -e "\ttotal_snapshots: The total amount of snapshots you wish to take before exiting."
+  echo -e "\tib_devices: A comma-separated string of mlx5 device names you wish to monitor."
+  echo -e "\tdevice_port: The port ID on each device you wish to monitor. Only 1 port is supported for monitoring currently."
+  echo -e "\t\tDefault is 1 for the first port.\n"
+  echo -e "Example:"
+  echo -e "\t./ibmon.sh /tmp/ccarlson/ \$(date +%s) 1 5 mlx5_0,mlx5_1,mlx5_2,mlx5_3,mlx5_4 1"
   exit 1
 fi
 
@@ -34,10 +45,10 @@ INFINIBAND_PORT=$6
 INFINIBAND_DEVICES=$(echo $INFINIBAND_DEVICES | tr -s ',' ' ')
 
 # Sanity checking
-[ -z $SNAPSHOT_SECONDS ] && echo "Need to set SNAPSHOT_SECONDS env" && exit 1
-[ -z $TOTAL_SNAPSHOTS ] && echo "Need to set TOTAL_SNAPSHOTS env" && exit 1
-[ -z $INFINIBAND_DEVICES ] && echo "Need to set INFINIBAND_DEVICES env" && exit 1
-[ -z $INFINIBAND_PORT ] && echo "Need to set INFINIBAND_PORT env" && exit 1
+[ -z "$SNAPSHOT_SECONDS" ] && echo "Need to set SNAPSHOT_SECONDS env" && exit 1
+[ -z "$TOTAL_SNAPSHOTS" ] && echo "Need to set TOTAL_SNAPSHOTS env" && exit 1
+[ -z "$INFINIBAND_DEVICES" ] && echo "Need to set INFINIBAND_DEVICES env" && exit 1
+[ -z "$INFINIBAND_PORT" ] && echo "Need to set INFINIBAND_PORT env" && exit 1
 [ ! -d $OUT_DIR ] && echo "'$OUT_DIR' is not a directory or does not exist" && exit 1
 
 # Check that perfquery is installed
@@ -74,9 +85,9 @@ for IB_DEV in $INFINIBAND_DEVICES; do
 
   PORT_LID=$(ibv_devinfo --ib-dev=$IB_DEV --ib-port=$INFINIBAND_PORT | grep port_lid | xargs | awk '{print $2}')
   IB_LIDS["$IB_DEV"]=$PORT_LID
-  echo "Port LID for $IB_DEV, port $INFINIBAND_PORT: $PORT_LID"
+  # echo "DEBUG: Port LID for $IB_DEV, port $INFINIBAND_PORT: $PORT_LID"
   # Capture headers to CSV file
-  OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.csv"
+  OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.ibmon.csv"
   echo -n "timestamp," > $OUT_FILE
   perfquery $PORT_LID $INFINIBAND_PORT | tail -5 | grep -o -P "^Port\w+" | xargs | tr -s '[:blank:]' '[,*]' >> $OUT_FILE
 done
@@ -88,7 +99,7 @@ while [[ i -lt $TOTAL_SNAPSHOTS ]]; do
   # Iterate over all IB devices and capture perfquery output for each one.
   for IB_DEV in "${!IB_LIDS[@]}"; do
     PORT_LID=${IB_LIDS[$IB_DEV]}
-    OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.csv"
+    OUT_FILE="$OUT_DIR/${HOST}_${IB_DEV}_${PORT_LID}_${MON_ID}.ibmon.csv"
 
     # Write the snapshot index, followed by the 5 values separated by commas
     echo -en "$i," >> $OUT_FILE
