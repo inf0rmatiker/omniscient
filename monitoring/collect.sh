@@ -68,5 +68,6 @@ echo "[+] downloaded host monitor files"
 
 # Combine host monitor files
 python3 $SCRIPT_DIR/nmon/csv-merge.py $OUTPUT_DIR/*nmon.csv > "$OUTPUT_DIR/aggregate.nmon.csv"
+python3 $SCRIPT_DIR/ibmon/aggregate.py $OUTPUT_DIR $MONITOR_ID
 
 echo "[+] combined host monitor files"
