@@ -225,6 +225,5 @@ def main():
     aggregate_results_per_cluster(host_csv_files, monitor_id, results_dir)
 
 
-
 if __name__ == '__main__':
     main()
