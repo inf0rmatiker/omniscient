@@ -6,7 +6,7 @@ USAGE="USAGE $(basename "$0") <COMMAND> [ARGS...]
 COMMANDS:
     collect <monitor-id> <directory>    retrieve and compile monitor results.
     help                                display this menu.
-    init                                initialize environment DEPRECATED.
+    init                                initialize environment.
     list                                list all monitors.
     remove <monitor-id>                 remove a monitor.
     start                               start a monitor.
