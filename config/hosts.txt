@@ -1,1 +1,3 @@
-n01 /home/users/ccarlson/omniscient
+n01 /tmp/omniscient
+n02 /tmp/omniscient
+n03 /tmp/omniscient
