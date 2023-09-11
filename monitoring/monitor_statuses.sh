@@ -13,12 +13,12 @@ declare -A MONITOR_IDS
 OUTPUT="\nMonitors for host $HOST:\n\n"
 
 [[ ${#PID_FILES[@]} -eq 0 ]] && \
-  OUTPUT="${OUTPUT}No monitors found for host." && \
+  OUTPUT="${OUTPUT}No monitors found for host.\n" && \
   echo -e $OUTPUT && \
   exit 0
 
-OUTPUT="${OUTPUT}Monitor Id\tType\tStatus\n"
-OUTPUT="${OUTPUT}--------------------------------\n"
+OUTPUT="${OUTPUT}Monitor Id\t\tType\tStatus\n"
+OUTPUT="${OUTPUT}------------------------------------\n"
 for FILE in "${PID_FILES[@]}"; do
   BASENAME=$(basename $FILE)
 
