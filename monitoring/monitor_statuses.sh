@@ -7,8 +7,8 @@ fi
 
 PID_DIR=$1
 HOST=$(hostname)
-read -a PID_FILES <<< $(find $PID_DIR -name "*.pid")
-declare -a MONITOR_IDS
+mapfile -d $'\0' PID_FILES < <(find $PID_DIR -name "*.pid" -print0)
+declare -A MONITOR_IDS
 
 OUTPUT="\nMonitors for host $HOST:\n\n"
 
@@ -33,7 +33,7 @@ for FILE in "${PID_FILES[@]}"; do
   IFS='.'
   read -a REMAINDER_FIELDS <<< "$REMAINDER"
   MONITOR_ID=${REMAINDER_FIELDS[0]}
-  MONITOR_IDS[$MONITOR_ID]=1
+  MONITOR_IDS[${MONITOR_ID}]+=1
   MONITOR_TYPE=${REMAINDER_FIELDS[1]}
   IFS=' '
 
