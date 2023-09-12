@@ -29,8 +29,8 @@ ibmon.sh <output_dir> <monitor_id> <snapshot_seconds> <total_snapshots> <ib_devi
 - `snapshot_seconds`: The interval between snapshots in seconds. Default is usually `1`.
 - `total_snapshots`: The total amount of snapshots you wish to take before exiting.
   - Example: `300` At 1-second snapshots, this takes 300 1-second snapshots.
-- `ib_devices`: A space-separated string of mlx5 device names you wish to monitor.
-  - Example: `"mlx5_0 mlx5_1 mlx5_2"` Capture information about 3 HCA devices.
+- `ib_devices`: A comma-separated string of mlx5 device names you wish to monitor.
+  - Example: `"mlx5_0,mlx5_1,mlx5_2"` Capture information about 3 HCA devices.
   - Example: `mlx5_0` Capture information about only `mlx5_0`.
 - `device_port`: The port ID on each device you wish to monitor. Only 1 port is supported for monitoring currently. Default is `1` for the first port.
   - Example: `1`
@@ -38,40 +38,39 @@ ibmon.sh <output_dir> <monitor_id> <snapshot_seconds> <total_snapshots> <ib_devi
 Example:
 
 ```console
-# ./ibmon.sh /tmp/ccarlson/ $(date +%s) 1 5 "mlx5_0 mlx5_1 mlx5_2 mlx5_3 mlx5_4" 1
+# ./ibmon.sh /tmp/omniscient/ root-20230911-200447 1 5 "mlx5_0,mlx5_1,mlx5_2,mlx5_4" 1
 Port LID for mlx5_0, port 1: 152
 Port LID for mlx5_1, port 1: 147
 Port LID for mlx5_2, port 1: 154
-Port LID for mlx5_3, port 1: 0
 Port LID for mlx5_4, port 1: 155
 ```
 
 Results in:
 
 ```console
-# tree /tmp/ccarlson/
-/tmp/ccarlson/
+# tree /tmp/omniscient/
+/tmp/omniscient/
 ├── o186i221_1694189342.ibmon.pid
-├── o186i221_mlx5_0_152_1694189342.csv
-├── o186i221_mlx5_1_147_1694189342.csv
-├── o186i221_mlx5_2_154_1694189342.csv
-├── o186i221_mlx5_3_0_1694189342.csv
-└── o186i221_mlx5_4_155_1694189342.csv
+├── o186i221_mlx5_0_152_root-20230911-200447.ibmon.csv
+├── o186i221_mlx5_1_147_root-20230911-200447.ibmon.csv
+├── o186i221_mlx5_2_154_root-20230911-200447.ibmon.csv
+└── o186i221_mlx5_4_155_root-20230911-200447.ibmon.csv
 
-0 directories, 6 files
+0 directories, 5 files
 ```
 
-To see what an example individual CSV capture looks like, check out [this result](example/o186i221_mlx5_0_152_1234.csv).
+To see what an example individual CSV capture looks like for a single device, check out [this result](example_multi_nodes/o186i221_mlx5_4_155_root-20230911-200447.ibmon.csv).
 
 ### aggregate.py
 
 This Python program imports the individual CSV captures for each device and aggregates their information into a single aggregate CSV file with columns for the
-summed data. It outputs one aggregate CSV file per host, and relies on Pandas DataFrame operations to merge, transform, and sum the data.
+summed data. It outputs one aggregate CSV file per host, and relies on Pandas DataFrame operations to merge, transform, and sum the data. It then takes the host-aggregated files, and merges them
+together to a single file for the total monitor session (which may span multiple hosts). This file contains 
 
 To run this script, you just need to provide it with two positional arguments:
 
 ```bash
-python3 aggregate.py <directory> <monitor_id>
+python3 aggregate.py <directory> <monitor_id> --log-level=[DEBUG|INFO|WARNING|ERROR]
 ```
 
 - `directory`: Directory where the individual device-based CSV captures reside.
@@ -81,7 +80,13 @@ This is also where your aggregate CSV file will be output.
 Example:
 
 ```bash
-python3 aggregate.py example/ 1234
+python3 aggregate.py example_multi_nodes/ root-20230911-200447 --log-level=INFO
 ```
 
-Results in [example/o186i221_1234_aggregate.csv](example/o186i221_1234_aggregate.csv).
+Results in:
+
+- Host aggregate files:
+   - [example_multi_nodes/o186i221_root-20230911-200447_host_aggregate.ibmon.csv](example_multi_nodes/o186i221_root-20230911-200447_host_aggregate.ibmon.csv)
+   - [example_multi_nodes/o186i222_root-20230911-200447_host_aggregate.ibmon.csv](example_multi_nodes/o186i222_root-20230911-200447_host_aggregate.ibmon.csv)
+- Cluster-wide monitor session aggregate file:
+   - [example_multi_nodes/root-20230911-200447_total_aggregate.ibmon.csv](example_multi_nodes/root-20230911-200447_total_aggregate.ibmon.csv)
